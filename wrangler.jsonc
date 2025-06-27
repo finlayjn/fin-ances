@@ -11,6 +11,14 @@
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare"
 	},
+	"d1_databases": [
+		{
+			"binding": "DATABASE",
+			"database_name": "fin-ances",
+			"database_id": "fe15717f-0ce9-4bb2-948f-79787210b892",
+			"migrations_dir": "drizzle"
+		}
+	],
 	"observability": {
 		"enabled": true
 	}

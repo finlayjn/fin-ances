@@ -1,38 +1,23 @@
-# sv
+# fin-ances
+(That's me, I'm Fin)
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+fin-ances is a simple free CRM for freelancers that can be deployed to Cloudflare Workers in just a few clicks.
 
-## Creating a project
+## Features and Roadmap
+- [ ] Saved products & services
+- [ ] Billing & receipts
+- [ ] Timekeeping
+- [ ] Income and expense tracking
+- [ ] Credentials authentication
+- [ ] Passkey authentication
+- [ ] Email notifications
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Installation
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/finlayjn/fin-ances)
 
-```bash
-# create a new project in the current directory
-npx sv create
+Test with `npm run dev` and build with `npm run build`.
 
-# create a new project in my-app
-npx sv create my-app
-```
+To deploy to Cloudflare Workers, click the button above or run `npm run deploy`.
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## License
+This software is licensed under the AGPLv3.
