@@ -1,26 +1,23 @@
 <script lang="ts">
 	import { startAuthentication } from '@simplewebauthn/browser';
-	import type { PublicKeyCredentialRequestOptionsJSON } from '@simplewebauthn/browser';
 
-	let result = $state('');
+	import type { PageProps } from './$types';
+	let { data }: PageProps = $props();
+
+	let output = $state('');
 
 	async function beginAuthentication() {
-		const optionsResp = await fetch('/api/authenticate');
-		const { optionsJSON, token } = (await optionsResp.json()) as {
-			optionsJSON: PublicKeyCredentialRequestOptionsJSON;
-			token: string;
-		};
 		try {
-			const authRes = await startAuthentication({ optionsJSON });
-			const verificationResp = await fetch('/api/authenticate', {
+			const auth = await startAuthentication({ optionsJSON: data.options });
+			const res = await fetch('/signin', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ reg: authRes, token: token })
+				body: JSON.stringify({ reg: auth, token: data.token })
 			});
-			const verificationJSON = await verificationResp.json();
-			result = JSON.stringify(verificationJSON, null, 2);
+			const result = await res.json();
+			output = JSON.stringify(result, null, 2);
 		} catch (error) {
 			alert(`Error: ${error}`);
 		}
@@ -30,5 +27,5 @@
 <button onclick={beginAuthentication}> Begin Authentication </button>
 
 <pre>
-    <code>{result}</code>
+    <code>{output}</code>
 </pre>

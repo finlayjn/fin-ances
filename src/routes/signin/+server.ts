@@ -1,43 +1,18 @@
 import { json, error } from '@sveltejs/kit';
-import {
-	generateAuthenticationOptions,
-	verifyAuthenticationResponse
-} from '@simplewebauthn/server';
+import { verifyAuthenticationResponse } from '@simplewebauthn/server';
 import { eq } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/d1';
 import * as schema from '$lib/server/db/schema';
 import { ORIGIN, RP_ID, JWT_SECRET } from '$env/static/private';
 import type { RequestHandler } from './$types';
 import type {
-	GenerateAuthenticationOptionsOpts,
 	AuthenticationResponseJSON,
 	AuthenticatorTransportFuture
 } from '@simplewebauthn/server';
 import jwt from '@tsndr/cloudflare-worker-jwt';
 import type { AuthChallengeJWT } from '$lib/types/auth';
 
-export const GET: RequestHandler = async () => {
-	const opts: GenerateAuthenticationOptionsOpts = {
-		timeout: 60000,
-		userVerification: 'preferred',
-		rpID: RP_ID
-	};
-
-	const optionsJSON = await generateAuthenticationOptions(opts);
-
-	const token = await jwt.sign(
-		{
-			challenge: optionsJSON.challenge,
-			nbf: Math.floor(Date.now() / 1000),
-			exp: Math.floor(Date.now() / 1000) + 5 * 60 // Expires: Now + 5m
-		},
-		JWT_SECRET
-	);
-
-	return json({ optionsJSON, token });
-};
-
-export const POST: RequestHandler = async ({ request, platform }) => {
+export const POST: RequestHandler = async ({ request, platform, cookies }) => {
 	if (!platform?.env.DATABASE) return new Response('Database not configured', { status: 500 });
 	const db = drizzle(platform.env.DATABASE, { schema });
 
@@ -60,7 +35,7 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 		verification = await verifyAuthenticationResponse({
 			response: body.reg,
 			expectedChallenge: challenge,
-			expectedOrigin: ORIGIN,
+			expectedOrigin: ORIGIN.split(','),
 			expectedRPID: RP_ID,
 			credential: {
 				id: passkey.credentialId,
@@ -81,6 +56,23 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 				})
 				.where(eq(schema.passkeys.credentialId, passkey.credentialId))
 				.run();
+
+			const token = await jwt.sign(
+				{
+					id: passkey.userId,
+					nbf: Math.floor(Date.now() / 1000),
+					exp: Math.floor(Date.now() / 1000) + 60 * 60 // Expires: Now + 1 hour
+				},
+				JWT_SECRET
+			);
+
+			cookies.set('token', token, {
+				path: '/',
+				httpOnly: true,
+				secure: true,
+				sameSite: 'strict'
+			});
+
 			return json({ verified });
 		} else {
 			return error(401, 'Not verified');
