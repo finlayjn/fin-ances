@@ -51,6 +51,10 @@
 		"wrangler": "^4.22.0"
 	},
 	"dependencies": {
+		"@simplewebauthn/browser": "^13.1.0",
+		"@simplewebauthn/server": "^13.1.1",
+		"@tsndr/cloudflare-worker-jwt": "^3.2.0",
+		"bcrypt-ts": "^7.1.0",
 		"dotenv": "^16.6.0",
 		"drizzle-orm": "^0.40.0"
 	}
