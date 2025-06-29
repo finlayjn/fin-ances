@@ -14,7 +14,7 @@
 		if (!accessCode) return;
 
 		if (accessCode !== page.url.searchParams.get('token')) {
-			await goto('/register?token=' + accessCode, { keepFocus: true, invalidateAll: true });
+			await goto('/auth/register?token=' + accessCode, { keepFocus: true, invalidateAll: true });
 		}
 
 		if (!data.options) {
@@ -24,7 +24,7 @@
 
 		try {
 			const reg = await startRegistration({ optionsJSON: data.options! });
-			const res = await fetch('/api/register', {
+			const res = await fetch('/auth/register', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'

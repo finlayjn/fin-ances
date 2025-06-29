@@ -26,7 +26,8 @@ export const POST: RequestHandler = async ({ request, platform, cookies }) => {
 	if (!challenge) return error(400, 'Challenge is required');
 
 	const passkey = await db.query.passkeys.findFirst({
-		where: eq(schema.passkeys.credentialId, body.reg.id)
+		where: eq(schema.passkeys.credentialId, body.reg.id),
+		with: { user: true }
 	});
 	if (!passkey) return error(401, 'Unauthorized passkey');
 
@@ -59,7 +60,10 @@ export const POST: RequestHandler = async ({ request, platform, cookies }) => {
 
 			const token = await jwt.sign(
 				{
-					id: passkey.userId,
+					id: passkey.user.id,
+					email: passkey.user.email,
+					firstName: passkey.user.firstName,
+					lastName: passkey.user.lastName,
 					nbf: Math.floor(Date.now() / 1000),
 					exp: Math.floor(Date.now() / 1000) + 60 * 60 // Expires: Now + 1 hour
 				},

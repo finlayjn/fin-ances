@@ -1,4 +1,5 @@
 import { sqliteTable, integer, text } from 'drizzle-orm/sqlite-core';
+import { relations } from 'drizzle-orm';
 
 export const users = sqliteTable('users', {
 	id: integer('id').primaryKey(),
@@ -6,7 +7,7 @@ export const users = sqliteTable('users', {
 	firstName: text('first_name'),
 	lastName: text('last_name'),
 	tokenHash: text('token_hash'),
-	tokenExpiration: integer('token_expiration'), // 3 days
+	tokenExpiration: integer('token_expiration'),
 	createdAt: integer('created_at')
 		.notNull()
 		.$defaultFn(() => Date.now()),
@@ -14,6 +15,10 @@ export const users = sqliteTable('users', {
 		.notNull()
 		.$defaultFn(() => Date.now())
 });
+
+export const usersRelations = relations(users, ({ many }) => ({
+	passkeys: many(passkeys)
+}));
 
 export const passkeys = sqliteTable('passkeys', {
 	id: integer('id').primaryKey(),
@@ -34,3 +39,10 @@ export const passkeys = sqliteTable('passkeys', {
 		.$defaultFn(() => Date.now()),
 	lastUsedAt: integer('last_used_at')
 });
+
+export const passkeysRelations = relations(passkeys, ({ one }) => ({
+	user: one(users, {
+		fields: [passkeys.userId],
+		references: [users.id]
+	})
+}));

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { startAuthentication } from '@simplewebauthn/browser';
-
+	import { goto } from '$app/navigation';
 	import type { PageProps } from './$types';
 	let { data }: PageProps = $props();
 
@@ -9,7 +9,7 @@
 	async function beginAuthentication() {
 		try {
 			const auth = await startAuthentication({ optionsJSON: data.options });
-			const res = await fetch('/signin', {
+			const res = await fetch('/auth/signin', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -18,6 +18,7 @@
 			});
 			const result = await res.json();
 			output = JSON.stringify(result, null, 2);
+			await goto('/dash');
 		} catch (error) {
 			alert(`Error: ${error}`);
 		}

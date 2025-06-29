@@ -7,7 +7,7 @@ import { hash } from 'bcrypt-ts';
 import { generateRandomPassword } from '$lib/helpers/generateRandomPassword';
 
 export const GET: RequestHandler = async ({ locals }) => {
-	return json({ userId: locals.userId }, { status: 200 });
+	return json({ userId: locals.user?.id }, { status: 200 });
 };
 
 export const POST: RequestHandler = async ({ platform, request }) => {
