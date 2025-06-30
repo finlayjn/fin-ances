@@ -1,5 +1,5 @@
 import { generateRegistrationOptions } from '@simplewebauthn/server';
-import { isNotNull, eq } from 'drizzle-orm';
+import { isNotNull } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/d1';
 import * as schema from '$lib/server/db/schema';
 import { compare } from 'bcrypt-ts';
@@ -16,26 +16,32 @@ export const load: PageServerLoad = async ({ platform, url }) => {
 	const token = url.searchParams.get('token');
 	if (!token) return {};
 
-	const users = await db
-		.select()
-		.from(schema.users)
-		.where(isNotNull(schema.users.tokenHash) && isNotNull(schema.users.tokenExpiration))
-		.all();
+	const users = await db.query.users.findMany({
+		where: isNotNull(schema.users.tokenHash) && isNotNull(schema.users.tokenExpiration),
+		columns: {
+			id: true,
+			email: true,
+			tokenHash: true,
+			tokenExpiration: true
+		},
+		with: {
+			passkeys: {
+				columns: {
+					credentialId: true,
+					transports: true
+				}
+			}
+		}
+	});
 
 	for (const user of users) {
 		if ((await compare(token, user.tokenHash!)) && user.tokenExpiration! > Date.now()) {
-			const userPasskeys = await db
-				.select()
-				.from(schema.passkeys)
-				.where(eq(schema.passkeys.userId, user.id))
-				.all();
-
 			const options = await generateRegistrationOptions({
 				rpName: RP_NAME,
 				rpID: RP_ID,
 				userName: user.email,
 				attestationType: 'none',
-				excludeCredentials: userPasskeys.map((pk) => ({
+				excludeCredentials: user.passkeys.map((pk) => ({
 					id: pk.credentialId,
 					transports: pk.transports.split(',') as AuthenticatorTransportFuture[]
 				})),

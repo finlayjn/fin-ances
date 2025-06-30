@@ -38,7 +38,7 @@ export const POST: RequestHandler = async ({ platform, request }) => {
 		verification = await verifyRegistrationResponse({
 			response: body.reg,
 			expectedChallenge: challenge,
-			expectedOrigin: ORIGIN,
+			expectedOrigin: ORIGIN.split(','),
 			expectedRPID: RP_ID
 		});
 
