@@ -5,13 +5,13 @@
 	function getColor(role: string): string {
 		switch (role) {
 			case 'admin':
-				return 'primary';
+				return 'badge-primary';
 			case 'manager':
-				return 'secondary';
+				return 'badge-secondary';
 			case 'staff':
-				return 'accent';
+				return 'badge-accent';
 			default:
-				return 'ghost';
+				return 'badge-ghost';
 		}
 	}
 </script>
@@ -42,12 +42,12 @@
 					</td>
 					<td> {user.email} </td>
 					<td>
-						<span class="badge badge-{getColor(user.role)} badge-sm">{user.role}</span>
+						<span class="badge {getColor(user.role)} badge-sm">{user.role}</span>
 					</td>
 					<td> {user.lastLogin} </td>
 					<th>
 						<div class="flex justify-end">
-							<a href={`/dash/user/${user.id}`} class="btn btn-ghost btn-xs">Edit</a>
+							<a href={`/dash/users/${user.id}`} class="btn btn-ghost btn-xs">Edit</a>
 						</div>
 					</th>
 				</tr>

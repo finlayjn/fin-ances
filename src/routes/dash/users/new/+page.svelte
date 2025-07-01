@@ -1,5 +1,5 @@
 <script lang="ts">
-	import UserDetails from './UserDetails.svelte';
+	import UserDetails from '../[id]/UserDetails.svelte';
 	let user = $state({});
 </script>
 

@@ -76,7 +76,7 @@
 						</div>
 						<div class="text-base-content/60 mb-2 text-sm">{data.currentUser?.email}</div>
 						<div>
-							<a class="link link-hover" href={`/dash/user/${data.currentUser?.id}`}>
+							<a class="link link-hover" href={`/dash/users/${data.currentUser?.id}`}>
 								Edit Profile
 							</a>
 							|

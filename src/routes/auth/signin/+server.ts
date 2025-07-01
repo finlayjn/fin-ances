@@ -13,7 +13,7 @@ import jwt from '@tsndr/cloudflare-worker-jwt';
 import type { AuthChallengeJWT } from '$lib/types/auth';
 
 export const POST: RequestHandler = async ({ request, platform, cookies }) => {
-	if (!platform?.env.DATABASE) return new Response('Database not configured', { status: 500 });
+	if (!platform?.env.DATABASE) return error(500, 'Database not configured');
 	const db = drizzle(platform.env.DATABASE, { schema });
 
 	const body = (await request.json()) as { token: string; reg: AuthenticationResponseJSON };

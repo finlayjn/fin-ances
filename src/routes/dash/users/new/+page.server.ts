@@ -36,6 +36,6 @@ export const actions = {
 		});
 
 		if (!result.success) return error(500, 'Failed to create user');
-		return redirect(302, `/dash/user/${result.meta.last_row_id}`);
+		return redirect(302, `/dash/users/${result.meta.last_row_id}`);
 	}
 } satisfies Actions;

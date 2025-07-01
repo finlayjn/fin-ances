@@ -4,7 +4,7 @@
 	let { data }: PageProps = $props();
 
 	async function deletePasskey(passkeyId: number) {
-		const res = await fetch(`/dash/user/${data.user.id}/passkey/${passkeyId}`, {
+		const res = await fetch(`/dash/users/${data.user.id}/passkey/${passkeyId}`, {
 			method: 'DELETE'
 		});
 		if (res.ok) await invalidateAll();

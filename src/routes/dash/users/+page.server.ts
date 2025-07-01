@@ -1,9 +1,10 @@
 import { drizzle } from 'drizzle-orm/d1';
 import * as schema from '$lib/server/db/schema';
 import type { PageServerLoad } from './$types';
+import { error } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ platform }) => {
-	if (!platform?.env.DATABASE) return new Response('Database not configured', { status: 500 });
+	if (!platform?.env.DATABASE) return error(500, 'Database not configured');
 	const db = drizzle(platform.env.DATABASE, { schema });
 
 	const users = await db.query.users.findMany({
@@ -51,6 +52,6 @@ export const load: PageServerLoad = async ({ platform }) => {
 		users: formattedUsers,
 		pageTitle: 'Users',
 		actionText: 'New User',
-		actionHref: '/dash/user'
+		actionHref: '/dash/users/new'
 	};
 };
